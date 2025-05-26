@@ -248,7 +248,7 @@ func tambahPengeluaran(A tabPengguna, C *tabPengeluaran, n int) { // sudah rapih
 					fmt.Printf(sp + "Masukkan nama negara: " + Reset)
 					fmt.Scan(&negaraBaru)
 					fmt.Print(sp + "Masukkan biaya tiket :" + Reset)
-					fmt.Scan(&hargaTiket) // gimana caranya dia ke block kalo dia bukan int
+					fmt.Scan(&hargaTiket)
 				}
 
 				C[i].transportasi = C[i].transportasi + hargaTiket
@@ -256,13 +256,13 @@ func tambahPengeluaran(A tabPengguna, C *tabPengeluaran, n int) { // sudah rapih
 
 			case 3:
 				fmt.Printf(sp + "Masukan jumlah : ")
-				fmt.Scan(&jumlah) // gimana blocknya caranya kalo itu bukan int
+				fmt.Scan(&jumlah)
 				C[i].makanan += jumlah
 				kategori = "makanan"
 				fmt.Print(sp+"Berhasil menambahkan  ", kategori, " Seharga Rp ", jumlah)
 			case 4:
 				fmt.Printf(sp + "Masukan jumlah : ")
-				fmt.Scan(&jumlah) // gimana blocknya caranya kalo itu bukan int
+				fmt.Scan(&jumlah)
 				C[i].hiburan += jumlah
 				kategori = "hiburan"
 				fmt.Print(sp+"Berhasil menambahkan  ", kategori, " Seharga Rp ", jumlah)
@@ -427,8 +427,8 @@ func hapusPengeluaran(A tabPengguna, C *tabPengeluaran, n int) { // sudah rapih
 
 	if A[i].id == IDUser { // sudah ada batasan jika salah input
 		fmt.Print(sp + "Masukan Pilihan : ")
-		fmt.Scan(&pilihan)      //
-		for i = 0; i < n; i++ { //
+		fmt.Scan(&pilihan)
+		for i = 0; i < n; i++ {
 			if A[i].id == IDUser {
 				fmt.Println(sp + "╔════╦═══════════════════╗")
 				fmt.Println(sp + "║ No ║     Kategori      ║")
@@ -476,4 +476,319 @@ func lihatSemua(A tabPengguna, B tabPengeluaran, n int) { // sudah rapih
 	}
 
 	fmt.Println(sp + "╚════════╩════════════════╩════════════╩══════════════╩══════════╩══════════╝")
+}
+func laporanAkhir(A tabPengguna, B tabPengeluaran, pax int, budget int) {
+	var total int
+	var selisih int
+	var presentase float64
+	var keterangan string
+	var rekomendasi string
+
+	fmt.Println()
+	fmt.Println(sp + "══════════════════════════════════════════════════════════════════════════════")
+	fmt.Println(sp + "                               LAPORAN AKHIR")
+	fmt.Println(sp + "══════════════════════════════════════════════════════════════════════════════")
+	fmt.Println(sp + "╔════╦════════════════╦════════════════════╦════════════╦════════════╦══════════╦══════════════════════════╗")
+	fmt.Println(sp + "║ ID ║ Nama           ║ Total Pengeluaran  ║ Budget     ║ Selisih    ║ Persen   ║ Keterangan               ║")
+	fmt.Println(sp + "╠════╬════════════════╬════════════════════╬════════════╬════════════╬══════════╬══════════════════════════╣")
+
+	for i := 0; i < pax; i++ {
+		total = B[i].akomodasi + B[i].transportasi + B[i].makanan + B[i].hiburan
+		selisih = budget - total
+		presentase = float64(total) / float64(budget) * 100
+
+		switch {
+		case presentase < 70:
+			keterangan = "Masih jauh dari limit"
+		case presentase >= 70 && presentase < 90:
+			keterangan = "Cukup besar, hati-hati"
+		case presentase >= 90 && presentase < 100:
+			keterangan = "Hampir habis, atur baik-baik"
+		case presentase >= 100:
+			keterangan = "Habis! Perlu evaluasi"
+		}
+
+		fmt.Printf("║ %-2d ║ %-14s ║ %-18d ║ %-10d ║ %-10d ║ %-8.2f%% ║ %-24s ║\n",
+			A[i].id, A[i].nama, total, budget, selisih, presentase, keterangan)
+	}
+
+	fmt.Println(sp + "╚════╩════════════════╩════════════════════╩════════════╩════════════╩══════════╩══════════════════════════╝")
+
+	// Tabel rekomendasi personal
+	fmt.Println()
+	fmt.Println(sp + "══════════════════════════════════════════════════════════════════════════════")
+	fmt.Println(sp + "                         REKOMENDASI PERSONAL UNTUK PENGGUNA")
+	fmt.Println(sp + "══════════════════════════════════════════════════════════════════════════════")
+	fmt.Println(sp + "╔════╦════════════════╦══════════════════════════════════════════════════════╗")
+	fmt.Println(sp + "║ ID ║ Nama           ║ Rekomendasi                                          ║")
+	fmt.Println(sp + "╠════╬════════════════╬══════════════════════════════════════════════════════╣")
+
+	for i := 0; i < pax; i++ {
+		total = B[i].akomodasi + B[i].transportasi + B[i].makanan + B[i].hiburan
+		presentase = float64(total) / float64(budget) * 100
+
+		switch {
+		case presentase < 70:
+			rekomendasi = "Coba beli oleh-oleh unik atau ikut tur lokal dadakan "
+		case presentase >= 70 && presentase < 90:
+			rekomendasi = "Pertimbangkan makan malam hemat atau cari diskon oleh-oleh "
+		case presentase >= 90 && presentase < 100:
+			rekomendasi = "Fokus ke destinasi gratis seperti taman kota atau street art "
+		case presentase >= 100:
+			rekomendasi = "Catat pengeluaran dan kurangi Belanja, utamakan kebutuhan pokok "
+		}
+
+		fmt.Printf("║ %-2d ║ %-14s ║ %-60s ║\n", A[i].id, A[i].nama, rekomendasi)
+	}
+
+	fmt.Println(sp + "╚════╩════════════════╩══════════════════════════════════════════════════════╝")
+}
+
+func cariPengeluaranSeq(A tabPengguna, B tabPengeluaran, n int) {
+	var i int
+	var maxakomodasi, maxtransportasi, maxmakanan, maxhiburan int
+
+	for i = 0; i < n-1; i++ {
+		if B[i].akomodasi > B[i+1].akomodasi {
+			maxakomodasi = B[i].akomodasi
+		} else {
+			maxakomodasi = B[i+1].akomodasi
+		}
+	}
+	i = 0
+	for maxakomodasi != B[i].akomodasi {
+		i++
+	}
+
+	fmt.Printf(sp+"Pengeluaran terbanyak pada kategori akomodasi sebesar %d oleh %s\n", maxakomodasi, A[i].nama)
+	for i = 0; i < n-1; i++ {
+		if B[i].transportasi > B[i+1].transportasi {
+			maxtransportasi = B[i].transportasi
+		} else {
+			maxtransportasi = B[i+1].transportasi
+		}
+	}
+
+	i = 0
+
+	for maxtransportasi != B[i].transportasi {
+		i++
+	}
+
+	fmt.Printf(sp+"Pengeluaran terbanyak pada kategori transportasi sebesar %d oleh %s\n", maxtransportasi, A[i].nama)
+	for i = 0; i < n-1; i++ {
+		if B[i].makanan > B[i+1].makanan {
+			maxmakanan = B[i].makanan
+		} else {
+			maxmakanan = B[i+1].makanan
+		}
+	}
+
+	i = 0
+
+	for maxmakanan != B[i].makanan {
+		i++
+	}
+
+	fmt.Printf(sp+"Pengeluaran terbanyak pada kategori makanan sebesar %d oleh %s\n", maxmakanan, A[i].nama)
+	for i = 0; i < n-1; i++ {
+		if B[i].hiburan > B[i+1].hiburan {
+			maxhiburan = B[i].hiburan
+		} else {
+			maxhiburan = B[i+1].hiburan
+		}
+	}
+
+	i = 0
+
+	for maxhiburan != B[i].hiburan {
+		i++
+	}
+
+	fmt.Printf(sp+"Pengeluaran terbanyak pada hiburan akomodasi sebesar %d oleh %s\n", maxhiburan, A[i].nama)
+}
+
+func cariPengeluaranBinary(A tabPengguna, B tabPengeluaran, n int) {
+	var kategori string
+	var target int
+	var dataPengeluaran [100]int
+	var urutUser [100]string
+
+	fmt.Println(sp + "╔════╦═══════════════════╗")
+	fmt.Println(sp + "║ No ║     Kategori      ║")
+	fmt.Println(sp + "╠════╬═══════════════════╣")
+	fmt.Println(sp + "║ 1  ║ Akomodasi         ║")
+	fmt.Println(sp + "║ 2  ║ Transportasi      ║")
+	fmt.Println(sp + "║ 3  ║ Makanan           ║")
+	fmt.Println(sp + "║ 4  ║ Hiburan           ║")
+	fmt.Println(sp + "╚════╩═══════════════════╝")
+	fmt.Print(sp + "Pilih kategori yang ingin dicari (1-4): ")
+	fmt.Scan(&kategori)
+
+	switch kategori {
+	case "1":
+		fmt.Print(sp + "Masukkan total pengeluaran akomodasi yang dicari: ")
+		fmt.Scan(&target)
+		for i := 0; i < n; i++ {
+			dataPengeluaran[i] = B[i].akomodasi
+			urutUser[i] = A[i].nama
+		}
+	case "2":
+		fmt.Print(sp + "Masukkan total pengeluaran transportasi yang dicari: ")
+		fmt.Scan(&target)
+		for i := 0; i < n; i++ {
+			dataPengeluaran[i] = B[i].transportasi
+			urutUser[i] = A[i].nama
+		}
+	case "3":
+		fmt.Print(sp + "Masukkan total pengeluaran makanan yang dicari: ")
+		fmt.Scan(&target)
+		for i := 0; i < n; i++ {
+			dataPengeluaran[i] = B[i].makanan
+			urutUser[i] = A[i].nama
+		}
+	case "4":
+		fmt.Print(sp + "Masukkan total pengeluaran hiburan yang dicari: ")
+		fmt.Scan(&target)
+		for i := 0; i < n; i++ {
+			dataPengeluaran[i] = B[i].hiburan
+			urutUser[i] = A[i].nama
+		}
+	default:
+		fmt.Println(sp + "Kategori tidak valid.")
+		return
+	}
+
+	// Sorting dulu
+	for i := 0; i < n-1; i++ {
+		for j := i + 1; j < n; j++ {
+			if dataPengeluaran[i] > dataPengeluaran[j] {
+				dataPengeluaran[i], dataPengeluaran[j] = dataPengeluaran[j], dataPengeluaran[i]
+				urutUser[i], urutUser[j] = urutUser[j], urutUser[i]
+			}
+		}
+	}
+
+	// Binary Search
+	low := 0
+	high := n - 1
+	mid := -1
+	found := false
+
+	for low <= high {
+		mid = (low + high) / 2
+		if dataPengeluaran[mid] == target {
+			found = true
+			break
+		} else if dataPengeluaran[mid] < target {
+			low = mid + 1
+		} else {
+			high = mid - 1
+		}
+	}
+
+	if found {
+		fmt.Println(sp + "Pengeluaran ditemukan pada beberapa user:")
+		// Cek ke kiri
+		i := mid
+		for i >= 0 && dataPengeluaran[i] == target {
+			fmt.Printf(sp+"Nama: %s | Total: %d\n", urutUser[i], dataPengeluaran[i])
+			i--
+		}
+		// Cek ke kanan
+		i = mid + 1
+		for i < n && dataPengeluaran[i] == target {
+			fmt.Printf(sp+"Nama: %s | Total: %d\n", urutUser[i], dataPengeluaran[i])
+			i++
+		}
+	} else {
+		fmt.Println(sp + "Tidak ada user dengan pengeluaran tersebut.")
+	}
+}
+
+func urutkanPengeluaran(daftarPengguna *tabPengguna, daftarPengeluaran *tabPengeluaran, jumlahPengguna int) {
+	var i, j, idxMin int
+	var penggunaSementara pengguna
+	var pengeluaranSementara Pengeluaran
+	var totalSekarang, totalBanding, totalMin, totalSebelumnya int
+
+	var pilihan int
+	fmt.Println("╔════╦══════════════════════════════════════════╗")
+	fmt.Println("║ No ║              Jenis Pengurutan            ║")
+	fmt.Println("╠════╬══════════════════════════════════════════╣")
+	fmt.Println("║ 1  ║ Minimal ke Maksimal (Selection Sort)     ║")
+	fmt.Println("║ 2  ║ Maksimal ke Minimal (Insertion Sort)     ║")
+	fmt.Println("╚════╩══════════════════════════════════════════╝")
+	fmt.Print("Masukkan pilihan (1/2): ")
+	fmt.Scan(&pilihan)
+
+	switch pilihan {
+	case 1:
+		// Selection Sort (Ascending)
+		for i = 0; i < jumlahPengguna-1; i++ {
+			idxMin = i
+			totalMin = daftarPengeluaran[i].akomodasi + daftarPengeluaran[i].transportasi + daftarPengeluaran[i].makanan + daftarPengeluaran[i].hiburan
+
+			for j = i + 1; j < jumlahPengguna; j++ {
+				totalBanding = daftarPengeluaran[j].akomodasi + daftarPengeluaran[j].transportasi + daftarPengeluaran[j].makanan + daftarPengeluaran[j].hiburan
+
+				if totalBanding < totalMin {
+					idxMin = j
+					totalMin = totalBanding
+				}
+			}
+
+			if idxMin != i {
+				// Tukar pengguna
+				penggunaSementara = daftarPengguna[i]
+				daftarPengguna[i] = daftarPengguna[idxMin]
+				daftarPengguna[idxMin] = penggunaSementara
+
+				// Tukar pengeluaran
+				pengeluaranSementara = daftarPengeluaran[i]
+				daftarPengeluaran[i] = daftarPengeluaran[idxMin]
+				daftarPengeluaran[idxMin] = pengeluaranSementara
+			}
+		}
+	case 2:
+		// Insertion Sort (Descending)
+		for i = 1; i < jumlahPengguna; i++ {
+			j = i
+			for j > 0 {
+				totalSekarang = daftarPengeluaran[j].akomodasi + daftarPengeluaran[j].transportasi + daftarPengeluaran[j].makanan + daftarPengeluaran[j].hiburan
+				totalSebelumnya = daftarPengeluaran[j-1].akomodasi + daftarPengeluaran[j-1].transportasi + daftarPengeluaran[j-1].makanan + daftarPengeluaran[j-1].hiburan
+
+				if totalSekarang > totalSebelumnya {
+					// Tukar pengguna
+					penggunaSementara = daftarPengguna[j]
+					daftarPengguna[j] = daftarPengguna[j-1]
+					daftarPengguna[j-1] = penggunaSementara
+
+					// Tukar pengeluaran
+					pengeluaranSementara = daftarPengeluaran[j]
+					daftarPengeluaran[j] = daftarPengeluaran[j-1]
+					daftarPengeluaran[j-1] = pengeluaranSementara
+
+					j--
+				} else {
+					break
+				}
+			}
+		}
+	default:
+		fmt.Println("Pilihan tidak valid.")
+		return
+	}
+
+	fmt.Println()
+
+	fmt.Println("╔════╦════════════════╦════════════════════╗")
+	fmt.Println("║ ID ║ Nama           ║ Total Pengeluaran  ║")
+	fmt.Println("╠════╬════════════════╬════════════════════╣")
+	for i = 0; i < jumlahPengguna; i++ {
+		total := (*daftarPengeluaran)[i].akomodasi + (*daftarPengeluaran)[i].transportasi + (*daftarPengeluaran)[i].makanan + (*daftarPengeluaran)[i].hiburan
+		fmt.Printf("║ %-2d ║ %-14s ║ %-18d ║\n", (*daftarPengguna)[i].id, (*daftarPengguna)[i].nama, total)
+	}
+	fmt.Println("╚════╩════════════════╩════════════════════╝")
+
 }
